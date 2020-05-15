@@ -1,0 +1,5 @@
+name: WSController
+version: 1.0
+author: Ekazuki
+main: fr.ekazuki.wscontroller.WSControllerPlugin
+
