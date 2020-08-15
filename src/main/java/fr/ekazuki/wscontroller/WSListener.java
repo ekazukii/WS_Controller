@@ -45,8 +45,6 @@ public class WSListener implements Emitter.Listener {
 				case "murder":
 					this.plugin.murderManager.dispatchWS(data);
 					break;
-				case "bungeecommand":
-					this.plugin.getProxy().getPluginManager().dispatchCommand(this.plugin.getProxy().getConsole(), data.getString("command"));
 				default:
 					break;
 			}
