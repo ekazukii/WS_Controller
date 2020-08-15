@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import me.confuser.banmanager.common.api.BmAPI;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.node.Node;
@@ -171,5 +172,19 @@ public class WSConnect {
 		obj.put("whitelist", this.plugin.whitelist);
 		obj.put("request", "sendWhitelist");
 		this.send("sendWhitelist", obj);
+	}
+
+	public void sendModeration(String name) throws JSONException {
+		JSONObject resJSON = new JSONObject();
+		resJSON.put("request", "sendModeration");
+		resJSON.put("success", true);
+		
+		JSONObject modJSON = new JSONObject();
+		modJSON.put("ban", BmAPI.isBanned(name));
+		modJSON.put("banip", BmAPI.isBanned(name));
+		modJSON.put("mute", BmAPI.isMuted(name));
+		
+		resJSON.put("moderation", modJSON);
+		this.send("sendModeration", resJSON);
 	}
 }

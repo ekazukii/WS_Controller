@@ -45,6 +45,8 @@ public class WSListener implements Emitter.Listener {
 				case "murder":
 					this.plugin.murderManager.dispatchWS(data);
 					break;
+				case "sendModeration":
+					this.plugin.con.sendModeration(data.getString("player"));
 				default:
 					break;
 			}
