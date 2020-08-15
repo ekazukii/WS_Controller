@@ -12,10 +12,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<repositories>
-		<repository>
-			<id>ME1312.net</id>
-       		<url>https://dev.ME1312.net/maven</url>
-   		</repository>
    		<repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -72,12 +68,6 @@
 	    	<artifactId>socket.io-client</artifactId>
 	    	<version>1.0.0</version>
 	  	</dependency>
-	  	<dependency>
-        	<groupId>net.ME1312.SubServers</groupId>
-        	<artifactId>SubServers.Bungee</artifactId>
-			<version>20w08d</version>
-			<scope>provided</scope>
-    	</dependency>
     	<dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>

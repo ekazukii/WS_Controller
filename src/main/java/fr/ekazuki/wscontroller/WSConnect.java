@@ -1,27 +1,22 @@
 package fr.ekazuki.wscontroller;
 
 import java.net.URISyntaxException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.base.Strings;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import net.ME1312.SubServers.Bungee.Host.SubServer;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.node.Node;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 
@@ -37,8 +32,10 @@ public class WSConnect {
 			IO.Options opts = new IO.Options();
 			opts.forceNew = true;
 			//opts.reconnection = false;
-			socket = IO.socket("http://localhost", opts);
-		} catch (URISyntaxException e) {
+			String url = this.plugin.getConfig("config").getString("socketUrl");
+			socket = IO.socket(url, opts);
+			System.out.println("Socket instanciate with url : " + url);
+		} catch (URISyntaxException e) { 
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return;
@@ -46,11 +43,13 @@ public class WSConnect {
 		
 		socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 			public void call(Object... arg0) {
+				System.out.println("Connected");
 				self.connected = true;
 				JSONObject obj = new JSONObject();
 				try {
 					obj.put("key", plugin.getConfig("config").getString("auth"));
 					socket.emit("auth", obj);
+					System.out.println("Auth sended");
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -108,41 +107,13 @@ public class WSConnect {
 
 	}
 	
-	public void sendServers() throws JSONException {
-		JSONObject json = new JSONObject();
-		json.put("request", "sendServers");
-		
-		JSONArray servers = new JSONArray();
-		
-		Map<String, SubServer> subservers = this.plugin.subservers2.getSubServers();
-		for (String key : subservers.keySet()) {
-			SubServer server = subservers.get(key);
-			JSONObject serverJSON = new JSONObject();
-			
-			serverJSON.put("name", key);
-			
-			serverJSON.put("displayName", server.getDisplayName());
-	        
-	        // Add online status to the JSON
-	        serverJSON.put("online", server.isRunning());
-	    
-	        // Save in the main JSON object
-			servers.put(serverJSON);
-		}
-		
-		json.put("servers", servers);
-		// Send the main JSON object to server
-		this.send("sendServers", json);
-	}
-	
 	public void sendServer(String serverName) throws JSONException {
-		SubServer server = this.plugin.subservers2.getSubServer(serverName);
+		ServerInfo server = this.plugin.getProxy().getServerInfo(serverName);
 		if (server == null) {
 			JSONObject errorJSON = new JSONObject();
 			errorJSON.put("error", "Server not found");
 			this.send("sendServer", errorJSON);
 		} else {
-			server.getWhitelist();
 			JSONObject serverJSON = new JSONObject();
 			
 			// Add list of players connected on this server to the JSON
@@ -152,12 +123,10 @@ public class WSConnect {
 	        }
 	        serverJSON.put("players", playernames);
 	        
-	        // Add online status to the JSON
-	        serverJSON.put("online", server.isRunning());
 	        
 	        serverJSON.put("displayName", serverName);
 	        
-	        serverJSON.put("name", server.getDisplayName());
+	        serverJSON.put("name", server.getName());
 
 			// Send the main JSON object to server
 			this.send("sendServer", serverJSON);
