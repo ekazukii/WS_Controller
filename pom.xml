@@ -16,6 +16,10 @@
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
+		  <repository>
+		    <id>confuser-repo</id>
+		    <url>https://ci.frostcast.net/plugin/repository/everything</url>
+		  </repository>
 	</repositories>
 	
 	<build>
@@ -81,5 +85,11 @@
 	        <version>5.1</version>
 	        <scope>provided</scope>
 	    </dependency>
+	    <dependency>
+	    	<groupId>me.confuser.banmanager</groupId>
+	    	<artifactId>BanManagerCommon</artifactId>
+	    	<version>7.3.0-SNAPSHOT</version>
+	    	<scope>provided</scope>
+	  	</dependency>
 	</dependencies>
 </project>
