@@ -37,16 +37,37 @@ public class WSListener implements Emitter.Listener {
 					this.plugin.whitelist = false;
 					break;
 				case "sendGroup":
-					this.plugin.con.sendGroup(data.getString("player"));
+					if(this.plugin.getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
+						this.plugin.con.sendGroup(data.getString("player"));
+					} else {
+						JSONObject res = new JSONObject();
+						res.put("success", false);
+						res.put("request", "sendGroup");
+						this.plugin.con.send("sendGroup", res);
+					}
 					break;
 				case "sendPrefix":
-					this.plugin.con.sendPrefix(data.getString("player"));
+					if(this.plugin.getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
+						this.plugin.con.sendPrefix(data.getString("player"));
+					} else {
+						JSONObject res = new JSONObject();
+						res.put("success", false);
+						res.put("request", "sendPrefix");
+						this.plugin.con.send("sendPrefix", res);
+					}
 					break;
 				case "murder":
 					this.plugin.murderManager.dispatchWS(data);
 					break;
 				case "sendModeration":
-					this.plugin.con.sendModeration(data.getString("player"));
+					if(this.plugin.getProxy().getPluginManager().getPlugin("BanManager") != null) {
+						this.plugin.con.sendModeration(data.getString("player"));
+					} else {
+						JSONObject res = new JSONObject();
+						res.put("success", false);
+						res.put("request", "sendModeration");
+						this.plugin.con.send("sendModeration", res);
+					}
 				default:
 					break;
 			}
