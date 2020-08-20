@@ -136,35 +136,54 @@ public class WSConnect {
 	}
 	
 	public void sendGroup(String player) throws JSONException {
-		LuckPerms api = LuckPermsProvider.get();
-		JSONObject serverJSON = new JSONObject();
-		serverJSON.put("request", "sendGroup");
-		serverJSON.put("group", api.getUserManager().getUser(player).getPrimaryGroup());
-		this.send("sendGroup", serverJSON);
+		ProxiedPlayer p = this.plugin.getProxy().getPlayer(player);
+		
+		if(p != null && p.isConnected()) {
+			LuckPerms api = LuckPermsProvider.get();
+			JSONObject serverJSON = new JSONObject();
+			serverJSON.put("request", "sendGroup");
+			serverJSON.put("group", api.getUserManager().getUser(player).getPrimaryGroup());
+			this.send("sendGroup", serverJSON);
+		} else {
+			JSONObject serverJSON = new JSONObject();
+			serverJSON.put("request", "sendGroup");
+			serverJSON.put("success", false);
+			this.send("sendGroup", serverJSON);
+		}
 	}
 	
 	public void sendPrefix(String player) throws JSONException {
-		LuckPerms api = LuckPermsProvider.get();
-		JSONObject serverJSON = new JSONObject();
-		String prefix = "";
-		serverJSON.put("request", "sendGroup");
-		Iterator<Node> it = api.getUserManager().getUser(player).getNodes().iterator();
-		while(it.hasNext()) {
-			String key = it.next().getKey();
-			System.out.println(key);
-			String[] strings = key.split("\\.");
-			System.out.println(key.length());
-			if(strings.length > 2) {
-				System.out.println("Premier test");
-				if(strings[0].equals("prefix")) {
-					System.out.println("Deuxieme test");
-					prefix = strings[2];
-				}	
+		ProxiedPlayer p = this.plugin.getProxy().getPlayer(player);
+		
+		if(p != null && p.isConnected()) {
+			LuckPerms api = LuckPermsProvider.get();
+			JSONObject serverJSON = new JSONObject();
+			String prefix = "";
+			serverJSON.put("request", "sendGroup");
+			Iterator<Node> it = api.getUserManager().getUser(player).getNodes().iterator();
+			while(it.hasNext()) {
+				String key = it.next().getKey();
+				System.out.println(key);
+				String[] strings = key.split("\\.");
+				System.out.println(key.length());
+				if(strings.length > 2) {
+					System.out.println("Premier test");
+					if(strings[0].equals("prefix")) {
+						System.out.println("Deuxieme test");
+						prefix = strings[2];
+					}	
+				}
 			}
+			serverJSON.put("request", "sendPrefix");
+			serverJSON.put("prefix", prefix);
+			this.send("sendPrefix", serverJSON);
+		} else {
+			JSONObject serverJSON = new JSONObject();
+			serverJSON.put("request", "sendPrefix");
+			serverJSON.put("success", false);
+			this.send("sendPrefix", serverJSON);
 		}
-		serverJSON.put("request", "sendPrefix");
-		serverJSON.put("prefix", prefix);
-		this.send("sendPrefix", serverJSON);
+
 	}
 
 	public void sendWhitelist() throws JSONException {
@@ -174,17 +193,26 @@ public class WSConnect {
 		this.send("sendWhitelist", obj);
 	}
 
-	public void sendModeration(String name) throws JSONException {
-		JSONObject resJSON = new JSONObject();
-		resJSON.put("request", "sendModeration");
-		resJSON.put("success", true);
+	public void sendModeration(String player) throws JSONException {
+		ProxiedPlayer p = this.plugin.getProxy().getPlayer(player);
 		
-		JSONObject modJSON = new JSONObject();
-		modJSON.put("ban", BmAPI.isBanned(name));
-		modJSON.put("banip", BmAPI.isBanned(name));
-		modJSON.put("mute", BmAPI.isMuted(name));
-		
-		resJSON.put("moderation", modJSON);
-		this.send("sendModeration", resJSON);
+		if(p != null && p.isConnected()) {
+			JSONObject resJSON = new JSONObject();
+			resJSON.put("request", "sendModeration");
+			resJSON.put("success", true);
+			
+			JSONObject modJSON = new JSONObject();
+			modJSON.put("ban", BmAPI.isBanned(player));
+			modJSON.put("banip", BmAPI.isBanned(player));
+			modJSON.put("mute", BmAPI.isMuted(player));
+			
+			resJSON.put("moderation", modJSON);
+			this.send("sendModeration", resJSON);
+		} else {
+			JSONObject serverJSON = new JSONObject();
+			serverJSON.put("request", "sendModeration");
+			serverJSON.put("success", false);
+			this.send("sendModeration", serverJSON);
+		}
 	}
 }
