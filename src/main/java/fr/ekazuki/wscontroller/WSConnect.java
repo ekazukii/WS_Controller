@@ -2,9 +2,15 @@ package fr.ekazuki.wscontroller;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +22,9 @@ import io.socket.emitter.Emitter;
 import me.confuser.banmanager.common.api.BmAPI;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.group.Group;
 import net.luckperms.api.node.Node;
+import net.luckperms.api.node.matcher.NodeMatcher;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -139,9 +147,18 @@ public class WSConnect {
 		ProxiedPlayer p = this.plugin.getProxy().getPlayer(player);
 		
 		if(p != null && p.isConnected()) {
-			LuckPerms api = LuckPermsProvider.get();
 			JSONObject serverJSON = new JSONObject();
+			LuckPerms api = LuckPermsProvider.get();
 			serverJSON.put("request", "sendGroup");
+			
+			JSONArray groupsJSON = new JSONArray();
+			Set<Group> niels = api.getGroupManager().getLoadedGroups();
+			Iterator<Group> it = niels.iterator();
+			while(it.hasNext()) {
+				groupsJSON.put(it.next().getName());
+			}
+			
+			serverJSON.put("groups", groupsJSON);
 			serverJSON.put("group", api.getUserManager().getUser(player).getPrimaryGroup());
 			this.send("sendGroup", serverJSON);
 		} else {
