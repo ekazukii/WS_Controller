@@ -46,6 +46,16 @@ public class WSListener implements Emitter.Listener {
 						this.plugin.con.send("sendGroup", res);
 					}
 					break;
+				case "sendGroups":
+					if(this.plugin.getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
+						this.plugin.con.sendGroups();
+					} else {
+						JSONObject res = new JSONObject();
+						res.put("success", false);
+						res.put("request", "sendGroup");
+						this.plugin.con.send("sendGroup", res);
+					}
+					break;
 				case "sendPrefix":
 					if(this.plugin.getProxy().getPluginManager().getPlugin("LuckPerms") != null) {
 						this.plugin.con.sendPrefix(data.getString("player"));

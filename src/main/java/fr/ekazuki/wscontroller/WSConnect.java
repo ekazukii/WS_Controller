@@ -150,15 +150,6 @@ public class WSConnect {
 			JSONObject serverJSON = new JSONObject();
 			LuckPerms api = LuckPermsProvider.get();
 			serverJSON.put("request", "sendGroup");
-			
-			JSONArray groupsJSON = new JSONArray();
-			Set<Group> niels = api.getGroupManager().getLoadedGroups();
-			Iterator<Group> it = niels.iterator();
-			while(it.hasNext()) {
-				groupsJSON.put(it.next().getName());
-			}
-			
-			serverJSON.put("groups", groupsJSON);
 			serverJSON.put("group", api.getUserManager().getUser(player).getPrimaryGroup());
 			this.send("sendGroup", serverJSON);
 		} else {
@@ -231,5 +222,21 @@ public class WSConnect {
 			serverJSON.put("success", false);
 			this.send("sendModeration", serverJSON);
 		}
+	}
+
+	public void sendGroups() throws JSONException  {
+		JSONObject serverJSON = new JSONObject();
+		LuckPerms api = LuckPermsProvider.get();
+		serverJSON.put("request", "sendGroups");
+		
+		JSONArray groupsJSON = new JSONArray();
+		Set<Group> niels = api.getGroupManager().getLoadedGroups();
+		Iterator<Group> it = niels.iterator();
+		while(it.hasNext()) {
+			groupsJSON.put(it.next().getName());
+		}
+		
+		serverJSON.put("groups", groupsJSON);
+		this.send("sendGroups", serverJSON);
 	}
 }
